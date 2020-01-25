@@ -19,6 +19,9 @@ motor_group RightDriveSmart = motor_group(rightMotorA, rightMotorB);
 motor armMotor = motor(PORT6,ratio18_1,false);
 bumper armBumper = bumper(Brain.ThreeWirePort.A);
 
+motor intakeLMotor = motor(PORT7,ratio18_1,false);
+motor intakeRMotor = motor(PORT8,ratio18_1,true);
+
 drivetrain Drivetrain = drivetrain(LeftDriveSmart, RightDriveSmart, 319.19, 520.6999999999999, 330.2, mm, 1);
 controller Controller1 = controller(primary);
 
