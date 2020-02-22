@@ -3,13 +3,13 @@ using namespace vex;
 extern brain Brain;
 
 // VEXcode devices
-extern motor armMotor;
+extern motor_group armMotorGroup;
 extern bumper armBumper;
 
-extern motor intakeLMotor;
-extern motor intakeRMotor;
+extern motor_group intakeGroup;
 
-extern drivetrain Drivetrain;
+extern inertial threeAxisGyro;
+extern smartdrive Drivetrain;
 extern controller Controller1;
 
 /**

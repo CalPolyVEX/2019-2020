@@ -8,22 +8,17 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-motor leftMotorA = motor(PORT1, ratio18_1, false);
-motor leftMotorB = motor(PORT2, ratio18_1, false);
-motor_group LeftDriveSmart = motor_group(leftMotorA, leftMotorB);
-
-motor rightMotorA = motor(PORT3, ratio18_1, true); 
-motor rightMotorB = motor(PORT4, ratio18_1, true); 
-motor_group RightDriveSmart = motor_group(rightMotorA, rightMotorB);
-
-motor armMotor = motor(PORT6,ratio18_1,false);
-bumper armBumper = bumper(Brain.ThreeWirePort.A);
-
-motor intakeLMotor = motor(PORT7,ratio18_1,false);
-motor intakeRMotor = motor(PORT8,ratio18_1,true);
-
-drivetrain Drivetrain = drivetrain(LeftDriveSmart, RightDriveSmart, 319.19, 520.6999999999999, 330.2, mm, 1);
 controller Controller1 = controller(primary);
+motor LeftDriveSmart = motor(PORT1, ratio18_1, true);
+motor RightDriveSmart = motor(PORT2, ratio18_1, false);
+drivetrain Drivetrain = drivetrain(LeftDriveSmart, RightDriveSmart, 319.19, 292.09999999999997, 101.6, mm, 1);
+motor ArmMotor1 = motor(PORT3, ratio18_1, true);
+motor ArmMotor2 = motor(PORT4, ratio18_1, true);
+motor_group ArmMotors = motor_group(ArmMotor1,ArmMotor2);
+motor ClawMotor = motor(PORT5, ratio36_1, false);
+pneumatics dig1 = pneumatics(Brain.ThreeWirePort.A);
+
+
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
@@ -93,4 +88,7 @@ int rc_auto_loop_callback_Controller1() {
  */
 void vexcodeInit( void ) {
   task rc_auto_loop_task_Controller1(rc_auto_loop_callback_Controller1);
+  ArmMotor1.setBrake(brake);
+  ArmMotor2.setBrake(brake);
+  ClawMotor.setBrake(hold);
 }
