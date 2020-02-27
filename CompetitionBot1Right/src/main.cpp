@@ -95,69 +95,62 @@ void autonomous(void) {
   // Insert autonomous user code here.
   // ..........................................................................
 
-  if(autonomousSelection == 2) {
+  int flipAngle = -1;
 
-  } else{
-    int flipAngle = -1;
-    if(autonomousSelection == 0){
-      flipAngle *= -1;
-    }
+  //First batch of blocks
+  Drivetrain.driveFor(forward, 5, inches, 70, rpm, true);
+  rotateArm();
+  Drivetrain.driveFor(forward, 27, inches, 40, rpm, false);
+  intake(true, 4.4, seconds);
+  Drivetrain.driveFor(forward, 4, inches, 40, rpm, false);
+  intake(true, 1.3, seconds);
+  intake(false, 0.2, seconds);
+  intake(true, 0.5, seconds);
 
-    //First batch of blocks
-    Drivetrain.driveFor(forward, 5, inches, 70, rpm, true);
-    rotateArm();
-    Drivetrain.driveFor(forward, 27, inches, 40, rpm, false);
-    intake(true, 4.4, seconds);
-    Drivetrain.driveFor(forward, 4, inches, 40, rpm, false);
-    intake(true, 1.3, seconds);
-    intake(false, 0.2, seconds);
-    intake(true, 0.5, seconds);
+  //tower block
+  Drivetrain.driveFor(reverse, 5, inches, 70, rpm, true);
+  Drivetrain.turnFor(flipAngle * 25, degrees, true);
+  Drivetrain.driveFor(forward, 16, inches, 50, rpm, false);
+  intake(true, 2.8, seconds);
+  intake(false, 0.2, seconds);
+  intake(true, 0.5, seconds);
+  Drivetrain.driveFor(reverse, 16, inches, 70, rpm, true);
 
-    //tower block
-    Drivetrain.driveFor(reverse, 5, inches, 70, rpm, true);
-    Drivetrain.turnFor(flipAngle * 25, degrees, true);
-    Drivetrain.driveFor(forward, 16, inches, 50, rpm, false);
-    intake(true, 2.8, seconds);
-    intake(false, 0.2, seconds);
-    intake(true, 0.5, seconds);
-    Drivetrain.driveFor(reverse, 16, inches, 70, rpm, true);
+  //Reverse into the 2nd stack
+  Drivetrain.turnToHeading(flipAngle * -34, degrees, 60, rpm);
+  straightenArm(150);
+  Drivetrain.driveFor(reverse, 32, inches, 100, rpm, false);
+  intake(true, 2, seconds);
 
-    //Reverse into the 2nd stack
-    Drivetrain.turnToHeading(flipAngle * -34, degrees, 60, rpm);
-    straightenArm(150);
-    Drivetrain.driveFor(reverse, 32, inches, 100, rpm, false);
-    intake(true, 2, seconds);
+  //grab 2nd stack
+  Drivetrain.turnToHeading(0, degrees, 50, rpm);
+  rotateArm();
+  intake(true, 0.7, seconds);
+  Drivetrain.driveFor(forward, 22, inches, 40, rpm, false);
+  intake(true, 3.8, seconds);
+  Drivetrain.driveFor(forward, 6, inches, 40, rpm, false);
+  intake(true, 2.5, seconds);
+  intake(false, 0.2, seconds);
+  intake(true, 0.5, seconds);
+  Drivetrain.driveFor(reverse, 5, inches, 50, rpm, true);
 
-    //grab 2nd stack
-    Drivetrain.turnToHeading(0, degrees, 50, rpm);
-    rotateArm();
-    intake(true, 0.7, seconds);
-    Drivetrain.driveFor(forward, 22, inches, 40, rpm, false);
-    intake(true, 3.8, seconds);
-    Drivetrain.driveFor(forward, 6, inches, 40, rpm, false);
-    intake(true, 2.5, seconds);
-    intake(false, 0.2, seconds);
-    intake(true, 0.5, seconds);
-    Drivetrain.driveFor(reverse, 5, inches, 50, rpm, true);
+  //go to scoring zone
+  straightenArm(150);
+  Drivetrain.turnToHeading(flipAngle * -90, degrees);
+  rotateArm();
+  intake(true, 1, seconds);
+  Drivetrain.driveFor(forward, 14, inches, 60, rpm, true);
+  Drivetrain.turnToHeading(flipAngle * -130, degrees);
+  Drivetrain.setTimeout(4, seconds);
+  Drivetrain.driveFor(forward, 39, inches, 100, rpm, true);
 
-    //go to scoring zone
-    straightenArm(150);
-    Drivetrain.turnToHeading(flipAngle * -90, degrees);
-    rotateArm();
-    intake(true, 1, seconds);
-    Drivetrain.driveFor(forward, 14, inches, 60, rpm, true);
-    Drivetrain.turnToHeading(flipAngle * -130, degrees);
-    Drivetrain.setTimeout(4, seconds);
-    Drivetrain.driveFor(forward, 39, inches, 100, rpm, true);
-
-    //Dump and backup
-    Drivetrain.setTimeout(2, seconds);
-    straightenArm(580);
-    Drivetrain.driveFor(forward, 2, inches, 30, rpm, true);
-    wait(1, seconds);
-    Drivetrain.driveFor(reverse, 9, inches, 30, rpm, true);
-    rotateArm(); 
-  }
+  //Dump and backup
+  Drivetrain.setTimeout(2, seconds);
+  straightenArm(580);
+  Drivetrain.driveFor(forward, 2, inches, 30, rpm, true);
+  wait(1, seconds);
+  Drivetrain.driveFor(reverse, 9, inches, 30, rpm, true);
+  rotateArm(); 
 }
 
 void autoButton(){
