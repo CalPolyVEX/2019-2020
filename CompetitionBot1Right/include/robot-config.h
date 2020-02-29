@@ -12,6 +12,10 @@ extern inertial threeAxisGyro;
 extern smartdrive Drivetrain;
 extern controller Controller1;
 
+extern pneumatics dig1;
+extern pneumatics dig2;
+
+
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Text.
  * 

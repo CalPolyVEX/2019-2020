@@ -20,7 +20,6 @@ motor armMotorL = motor(PORT5,ratio36_1,true);
 motor armMotorR = motor(PORT6,ratio36_1,false);
 motor_group armMotorGroup = motor_group(armMotorL, armMotorR);
 
-
 bumper armBumper = bumper(Brain.ThreeWirePort.A);
 
 motor intakeLMotor = motor(PORT7,ratio36_1,false);
@@ -30,6 +29,10 @@ motor_group intakeGroup = motor_group(intakeLMotor,intakeRMotor);
 inertial threeAxisGyro = inertial(PORT20);
 
 smartdrive Drivetrain = smartdrive(LeftDriveSmart, RightDriveSmart, threeAxisGyro, 319.19, 520.6999999999999, 330.2, mm, 1);
+
+pneumatics dig1 = pneumatics(Brain.ThreeWirePort.A);
+pneumatics dig2 = pneumatics(Brain.ThreeWirePort.B);
+
 controller Controller1 = controller(primary);
 
 // VEXcode generated functions

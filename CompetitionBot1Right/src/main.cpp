@@ -20,6 +20,8 @@ using namespace vex;
 competition Competition;
 
 // define your global instances of motors and other devices here
+bool pneumaticsOpened = false;
+
 
 // user defined functions
 
@@ -42,6 +44,18 @@ void rotateArm() {
 void straightenArm(int turnAngle) {
   armMotorGroup.setVelocity(25, rpm);
   armMotorGroup.spinToPosition(-turnAngle, degrees, true);
+}
+
+void openPneumatics() {
+  if(pneumaticsOpened) {
+    dig1.close();
+    dig2.close();
+    pneumaticsOpened = false;
+  } else {
+    dig1.open();
+    dig2.open();
+    pneumaticsOpened = true;
+  }
 }
 
 void intake(bool forw, double t, timeUnits u) {
@@ -172,6 +186,7 @@ void autoButton(){
 void usercontrol(void) {
   // User control code here, inside the loop
   Controller1.ButtonB.pressed(rotateArm);
+  Controller1.ButtonY.pressed(openPneumatics);
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
