@@ -7,6 +7,7 @@ extern motor_group armMotorGroup;
 extern bumper armBumper;
 
 extern motor_group intakeGroup;
+extern motor_group intakeWires;
 
 extern inertial threeAxisGyro;
 extern smartdrive Drivetrain;

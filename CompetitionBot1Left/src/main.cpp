@@ -28,7 +28,6 @@ void whenArmBumperIsPressed() {
   armMotorGroup.stop();
   armMotorGroup.resetRotation();
   armMotorGroup.resetPosition();
-
 }
 
 void rotateArm() {
@@ -45,7 +44,7 @@ void straightenArm(int turnAngle) {
   armMotorGroup.spinToPosition(-turnAngle, degrees, true);
 }
 
-void openPneumatics() {
+void togglePneumatics() {
   if(pneumaticsOpened) {
     dig1.close();
     dig2.close();
@@ -67,6 +66,15 @@ void intake(bool forw, double t, timeUnits u) {
   intakeGroup.stop();
 }
 
+void openIntake(bool closing, double distance, double vel, bool waitComplete) {
+  if(closing) {
+    intakeWires.spinTo(distance, degrees, vel, rpm, waitComplete);
+  } else {
+    intakeWires.spinTo(-distance, degrees, vel, rpm, waitComplete);
+  }
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -75,6 +83,9 @@ void intake(bool forw, double t, timeUnits u) {
 /*  or the autonomous and usercontrol tasks will not be started.  This       */
 /*  function is only called once after the V5 has been powered on and        */
 /*  not every time that the robot is disabled.                               */
+
+
+
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
@@ -87,6 +98,7 @@ void pre_auton(void) {
   threeAxisGyro.calibrate(); 
   Drivetrain.setDriveVelocity(50, rpm);
   intakeGroup.setVelocity(180, rpm);
+  intakeWires.setVelocity(150, rpm);
   
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -117,48 +129,43 @@ void autonomous(void) {
     }
 
     //First batch of blocks
-    Drivetrain.driveFor(forward, 5, inches, 70, rpm, true);
     rotateArm();
-    Drivetrain.driveFor(forward, 27, inches, 40, rpm, false);
+    Drivetrain.driveFor(forward, 5, inches, 70, rpm, true);
+    togglePneumatics();
+    openIntake(true, 100, 40, false);
+    Drivetrain.driveFor(forward, 29, inches, 40, rpm, false);
     intake(true, 4.4, seconds);
-    Drivetrain.driveFor(forward, 4, inches, 40, rpm, false);
-    intake(true, 1.3, seconds);
-    intake(false, 0.2, seconds);
-    intake(true, 0.5, seconds);
+    togglePneumatics();
 
     //tower block
-    Drivetrain.driveFor(reverse, 5, inches, 70, rpm, true);
     Drivetrain.turnFor(flipAngle * 25, degrees, true);
-    Drivetrain.driveFor(forward, 16, inches, 50, rpm, false);
+    Drivetrain.driveFor(forward, 12, inches, 50, rpm, false);
     intake(true, 2.8, seconds);
-    intake(false, 0.2, seconds);
-    intake(true, 0.5, seconds);
-    Drivetrain.driveFor(reverse, 16, inches, 70, rpm, true);
+    Drivetrain.driveFor(reverse, 12, inches, 70, rpm, true);
 
     //Reverse into the 2nd stack
-    Drivetrain.turnToHeading(flipAngle * -34, degrees, 60, rpm);
-    straightenArm(150);
-    Drivetrain.driveFor(reverse, 32, inches, 100, rpm, false);
+    Drivetrain.turnToHeading(flipAngle * -28, degrees, 60, rpm);
+    straightenArm(100);
+    Drivetrain.driveFor(reverse, 38, inches, 100, rpm, false);
     intake(true, 2, seconds);
 
     //grab 2nd stack
     Drivetrain.turnToHeading(0, degrees, 50, rpm);
     rotateArm();
-    intake(true, 0.7, seconds);
+    openIntake(true, 150, 30, false);
+    intake(true, 0.4, seconds);
     Drivetrain.driveFor(forward, 22, inches, 40, rpm, false);
     intake(true, 3.8, seconds);
-    Drivetrain.driveFor(forward, 6, inches, 40, rpm, false);
-    intake(true, 2.5, seconds);
-    intake(false, 0.2, seconds);
-    intake(true, 0.5, seconds);
-    Drivetrain.driveFor(reverse, 5, inches, 50, rpm, true);
+    Drivetrain.driveFor(forward, 10, inches, 40, rpm, false);
+    intake(true, 2.8, seconds);
+    Drivetrain.driveFor(reverse, 9, inches, 50, rpm, true);
 
     //go to scoring zone
-    straightenArm(150);
+    straightenArm(100);
     Drivetrain.turnToHeading(flipAngle * -90, degrees);
     rotateArm();
     intake(true, 1, seconds);
-    Drivetrain.driveFor(forward, 14, inches, 60, rpm, true);
+    Drivetrain.driveFor(forward, 18, inches, 60, rpm, true);
     Drivetrain.turnToHeading(flipAngle * -130, degrees);
     Drivetrain.setTimeout(4, seconds);
     Drivetrain.driveFor(forward, 39, inches, 100, rpm, true);
@@ -167,9 +174,10 @@ void autonomous(void) {
     Drivetrain.setTimeout(2, seconds);
     straightenArm(580);
     Drivetrain.driveFor(forward, 2, inches, 30, rpm, true);
-    wait(0.6, seconds);
+    wait(0.3, seconds);
+    openIntake(false, 737, 150, true);
     Drivetrain.driveFor(reverse, 9, inches, 30, rpm, true);
-    rotateArm(); 
+    rotateArm();
   }
 }
 
@@ -192,7 +200,7 @@ void autoButton(){
 void usercontrol(void) {
   // User control code here, inside the loop
   Controller1.ButtonB.pressed(rotateArm);
-  Controller1.ButtonY.pressed(openPneumatics);
+  Controller1.ButtonY.pressed(togglePneumatics);
   while (1) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
@@ -204,10 +212,8 @@ void usercontrol(void) {
     // ........................................................................
 
     if(Controller1.ButtonX.pressing()){
-      armMotorGroup.spin(reverse, 60, rpm);
-    } else if(Controller1.ButtonL1.pressing()){
       armMotorGroup.spin(reverse, 40, rpm);
-    } else if(Controller1.ButtonA.pressing()){
+    } else if(Controller1.ButtonA.pressing() && armMotorGroup.position(degrees) < 0){
       armMotorGroup.spin(forward, 60, rpm);
     } else{
       armMotorGroup.stop();
@@ -221,6 +227,14 @@ void usercontrol(void) {
       intakeGroup.stop();
     }
 
+    if(Controller1.ButtonL1.pressing()){
+      intakeWires.spin(forward);
+    } else if(Controller1.ButtonL2.pressing()) {
+      intakeWires.spin(reverse);
+    } else {
+      intakeWires.stop();
+    }
+
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
@@ -232,7 +246,7 @@ void usercontrol(void) {
 int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+  Competition.drivercontrol(autonomous);
 
   // Run the pre-autonomous function.
   pre_auton();

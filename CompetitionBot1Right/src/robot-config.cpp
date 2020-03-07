@@ -26,12 +26,16 @@ motor intakeLMotor = motor(PORT7,ratio36_1,false);
 motor intakeRMotor = motor(PORT8,ratio36_1,true);
 motor_group intakeGroup = motor_group(intakeLMotor,intakeRMotor);
 
+motor intakeWireL = motor(PORT12,ratio18_1,false);
+motor intakeWireR = motor(PORT10,ratio18_1,true);
+motor_group intakeWires = motor_group(intakeWireL,intakeWireR);
+
 inertial threeAxisGyro = inertial(PORT20);
 
 smartdrive Drivetrain = smartdrive(LeftDriveSmart, RightDriveSmart, threeAxisGyro, 319.19, 520.6999999999999, 330.2, mm, 1);
 
-pneumatics dig1 = pneumatics(Brain.ThreeWirePort.A);
-pneumatics dig2 = pneumatics(Brain.ThreeWirePort.B);
+pneumatics dig1 = pneumatics(Brain.ThreeWirePort.B);
+pneumatics dig2 = pneumatics(Brain.ThreeWirePort.C);
 
 controller Controller1 = controller(primary);
 
