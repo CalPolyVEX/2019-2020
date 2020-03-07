@@ -79,7 +79,7 @@ void usercontrol(void) {
       stopClaw = false;
     }
 
-    if(Controller1.ButtonL1.pressing() && ArmMotors.position(degrees)<=650){
+    if(Controller1.ButtonL1.pressing() && ArmMotors.position(degrees)<=510){
       ArmMotors.spin(forward);
       stopArm = true;
     } else if(Controller1.ButtonL2.pressing() && ArmMotors.position(degrees)>=0){
@@ -90,7 +90,7 @@ void usercontrol(void) {
       stopArm = false;
     }
 
-    if(Controller1.ButtonR1.pressing() && WristMotor.position(degrees)<=120){
+    if(Controller1.ButtonR1.pressing() && WristMotor.position(degrees)<=180){
       WristMotor.spin(forward);
       stopWrist = true;
     } else if(Controller1.ButtonR2.pressing() && WristMotor.position(degrees)>=0){
