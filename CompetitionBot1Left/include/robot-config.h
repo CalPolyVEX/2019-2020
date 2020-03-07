@@ -7,11 +7,18 @@ extern motor_group armMotorGroup;
 extern bumper armBumper;
 
 extern motor_group intakeGroup;
+
+extern motor intakeWireL;
+extern motor intakeWireR;
 extern motor_group intakeWires;
 
 extern inertial threeAxisGyro;
 extern smartdrive Drivetrain;
 extern controller Controller1;
+
+extern motor_group LeftDriveSmart;
+extern motor_group RightDriveSmart;
+
 
 extern pneumatics dig1;
 extern pneumatics dig2;

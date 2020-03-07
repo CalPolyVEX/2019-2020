@@ -109,4 +109,6 @@ void vexcodeInit( void ) {
   task rc_auto_loop_task_Controller1(rc_auto_loop_callback_Controller1);
   armMotorL.setBrake(brake);
   armMotorR.setBrake(brake);
+  intakeLMotor.setBrake(brake);
+  intakeRMotor.setBrake(brake);
 }

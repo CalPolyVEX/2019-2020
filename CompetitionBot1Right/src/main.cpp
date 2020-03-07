@@ -40,7 +40,7 @@ void rotateArm() {
 }
 
 void straightenArm(int turnAngle) {
-  armMotorGroup.setVelocity(25, rpm);
+  armMotorGroup.setVelocity(30, rpm);
   armMotorGroup.spinToPosition(-turnAngle, degrees, true);
 }
 
@@ -66,13 +66,19 @@ void intake(bool forw, double t, timeUnits u) {
   intakeGroup.stop();
 }
 
-void openIntake(bool closing, double distance) {
-  if(closing) {
-    intakeWires.spinTo(distance, degrees);
-  } else {
-    intakeWires.spinTo(-distance, degrees);
-  }
+void openIntake(double distance, double vel, bool waitComplete) {
+  intakeWires.spinTo(distance, degrees, vel, rpm, waitComplete);
+}
 
+void wiggle() {
+  Drivetrain.setTimeout(500, msec);
+  LeftDriveSmart.setTimeout(500, msec);
+  RightDriveSmart.setTimeout(500, msec);
+  LeftDriveSmart.spinFor(reverse, 2, rev, 50, rpm, true);
+  Drivetrain.driveFor(fwd, 4, inches, 50, rpm);
+  RightDriveSmart.spinFor(reverse, 2, rev, 50, rpm, true);
+  Drivetrain.setTimeout(1500, msec);
+  Drivetrain.driveFor(fwd, 4, inches ,50, rpm);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -91,7 +97,7 @@ void openIntake(bool closing, double distance) {
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  
+  Drivetrain.setTurnThreshold(3);
   // Callback for when the arm limit switch is pressed 
   armBumper.pressed(whenArmBumperIsPressed);
 
@@ -119,65 +125,66 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
-  int flipAngle = -1;
 
+  int flipAngle = -1;
   //First batch of blocks
   rotateArm();
   Drivetrain.driveFor(forward, 5, inches, 70, rpm, true);
   togglePneumatics();
-  Drivetrain.driveFor(forward, 32, inches, 40, rpm, false);
-  intake(true, 4.4, seconds);
-  Drivetrain.driveFor(forward, 4, inches, 40, rpm, false);
-  intake(true, 1.3, seconds);
-  intake(false, 0.2, seconds);
-  intake(true, 0.5, seconds);
+  openIntake(100, 40, false);
+  Drivetrain.driveFor(forward, 29, inches, 40, rpm, false);
+  intake(true, 3.2, seconds);
   togglePneumatics();
+  wait(0.3, seconds);
 
   //tower block
-  Drivetrain.driveFor(reverse, 5, inches, 70, rpm, true);
-  Drivetrain.turnFor(flipAngle * 25, degrees, true);
-  Drivetrain.driveFor(forward, 16, inches, 50, rpm, false);
+  Drivetrain.turnToHeading(flipAngle * 20, degrees, 30, rpm, true);
+  Drivetrain.driveFor(forward, 12, inches, 50, rpm, false);
   intake(true, 2.8, seconds);
-  intake(false, 0.2, seconds);
-  intake(true, 0.5, seconds);
-  Drivetrain.driveFor(reverse, 16, inches, 70, rpm, true);
+  Drivetrain.driveFor(reverse, 12, inches, 70, rpm, true);
+  wait(0.3, seconds);
 
   //Reverse into the 2nd stack
-  Drivetrain.turnToHeading(flipAngle * -34, degrees, 60, rpm);
-  straightenArm(150);
-  Drivetrain.driveFor(reverse, 32, inches, 100, rpm, false);
+  Drivetrain.turnToHeading(flipAngle * -35, degrees, 30, rpm);
+  straightenArm(100);
+  Drivetrain.driveFor(reverse, 43, inches, 80, rpm, false);
   intake(true, 2, seconds);
 
   //grab 2nd stack
-  Drivetrain.turnToHeading(0, degrees, 50, rpm);
+  Drivetrain.turnToHeading(0, degrees, 30, rpm);
   rotateArm();
-  intake(true, 0.7, seconds);
-  Drivetrain.driveFor(forward, 22, inches, 40, rpm, false);
-  intake(true, 3.8, seconds);
-  Drivetrain.driveFor(forward, 6, inches, 40, rpm, false);
+  intake(true, 0.2, seconds);
+  openIntake(150, 30, false);
+  Drivetrain.driveFor(forward, 40, inches, 40, rpm, false);
   intake(true, 2.5, seconds);
-  intake(false, 0.2, seconds);
-  intake(true, 0.5, seconds);
-  Drivetrain.driveFor(reverse, 5, inches, 50, rpm, true);
+  Drivetrain.driveFor(reverse, 17, inches, 50, rpm, true);
 
   //go to scoring zone
-  straightenArm(150);
-  Drivetrain.turnToHeading(flipAngle * -90, degrees);
+  straightenArm(100);
+  Drivetrain.turnToHeading(flipAngle * -90, degrees, 30, rpm);
   rotateArm();
-  intake(true, 1, seconds);
-  Drivetrain.driveFor(forward, 14, inches, 60, rpm, true);
-  Drivetrain.turnToHeading(flipAngle * -130, degrees);
-  Drivetrain.setTimeout(4, seconds);
-  Drivetrain.driveFor(forward, 39, inches, 100, rpm, true);
+  intake(true, 0.2, seconds);
+  Drivetrain.driveFor(forward, 16, inches, 60, rpm, true);
+  wait(0.3, seconds);
+  Drivetrain.turnToHeading(flipAngle * -125, degrees, 30, rpm);
+  Drivetrain.setTimeout(2500, msec);
+  Drivetrain.driveFor(forward, 33, inches, 100, rpm, true);
+  // wiggle();
 
   //Dump and backup
+  wait(0.2, seconds);
   Drivetrain.setTimeout(2, seconds);
-  straightenArm(580);
-  Drivetrain.driveFor(forward, 2, inches, 30, rpm, true);
+  Drivetrain.driveFor(reverse, 1.6, inches, 30, rpm, true);
+  intake(false, 0.15, seconds);
+  straightenArm(240);
+  openIntake(-200, 150, true);
+  straightenArm(500);
+  openIntake(-737, 150, true);
   wait(0.3, seconds);
-  openIntake(false, 737);
+  Drivetrain.driveFor(forward, 3, inches, 15, rpm, true);
   Drivetrain.driveFor(reverse, 9, inches, 30, rpm, true);
   rotateArm();
+  openIntake(0, 150, true);
 }
 
 void autoButton(){
@@ -230,6 +237,10 @@ void usercontrol(void) {
       intakeWires.spin(forward);
     } else if(Controller1.ButtonL2.pressing()) {
       intakeWires.spin(reverse);
+    } else if(Controller1.ButtonLeft.pressing()){
+      intakeWireL.spin(forward);
+    } else if(Controller1.ButtonRight.pressing()) {
+      intakeWireR.spin(forward);
     } else {
       intakeWires.stop();
     }
