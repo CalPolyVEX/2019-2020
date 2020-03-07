@@ -12,11 +12,12 @@ controller Controller1 = controller(primary);
 motor LeftDriveSmart = motor(PORT1, ratio18_1, true);
 motor RightDriveSmart = motor(PORT2, ratio18_1, false);
 drivetrain Drivetrain = drivetrain(LeftDriveSmart, RightDriveSmart, 319.19, 292.09999999999997, 101.6, mm, 1);
-motor ArmMotor1 = motor(PORT3, ratio18_1, true);
-motor ArmMotor2 = motor(PORT4, ratio18_1, true);
+motor ArmMotor1 = motor(PORT3, ratio36_1, true);
+motor ArmMotor2 = motor(PORT4, ratio36_1, true);
 motor_group ArmMotors = motor_group(ArmMotor1,ArmMotor2);
-motor ClawMotor = motor(PORT5, ratio36_1, false);
-pneumatics dig1 = pneumatics(Brain.ThreeWirePort.A);
+motor ClawMotor = motor(PORT5, ratio18_1, false);
+motor WristMotor = motor(PORT6, ratio18_1, false);
+// pneumatics dig1 = pneumatics(Brain.ThreeWirePort.A);
 
 
 
@@ -36,8 +37,8 @@ int rc_auto_loop_callback_Controller1() {
       // calculate the drivetrain motor velocities from the controller joystick axies
       // left = Axis3 + Axis1
       // right = Axis3 - Axis1
-      int drivetrainLeftSideSpeed = Controller1.Axis3.position() + Controller1.Axis1.position();
-      int drivetrainRightSideSpeed = Controller1.Axis3.position() - Controller1.Axis1.position();
+      int drivetrainLeftSideSpeed = Controller1.Axis3.position() - Controller1.Axis1.position();
+      int drivetrainRightSideSpeed = Controller1.Axis3.position() + Controller1.Axis1.position();
       // check if the value is inside of the deadband range
       if (drivetrainLeftSideSpeed < 5 && drivetrainLeftSideSpeed > -5) {
         // check if the left motor has already been stopped
@@ -88,7 +89,8 @@ int rc_auto_loop_callback_Controller1() {
  */
 void vexcodeInit( void ) {
   task rc_auto_loop_task_Controller1(rc_auto_loop_callback_Controller1);
-  ArmMotor1.setBrake(brake);
-  ArmMotor2.setBrake(brake);
+  ArmMotor1.setBrake(hold);
+  ArmMotor2.setBrake(hold);
+  WristMotor.setBrake(hold);
   ClawMotor.setBrake(hold);
 }

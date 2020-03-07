@@ -25,7 +25,9 @@ using namespace vex;
 competition Competition;
 
 // define your global instances of motors and other devices here
-bool ClawOpened = false;
+bool stopClaw = true;
+bool stopWrist = true;
+bool stopArm = true;
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -44,9 +46,10 @@ void pre_auton(void) {
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
   ArmMotors.resetPosition();
-  ClawMotor.resetPosition();
-  ArmMotors.setVelocity(20, percent);
-  ClawMotor.setVelocity(20, percent);
+  WristMotor.resetPosition();
+  ArmMotors.setVelocity(40, percent);
+  WristMotor.setVelocity(20, percent);
+  ClawMotor.setVelocity(50, percent);
   Drivetrain.setDriveVelocity(100, percent);
 }
 
@@ -63,27 +66,39 @@ void usercontrol(void) {
     // values based on feedback from the joysticks.
 
     if( Controller1.ButtonX.pressing()) {
-     dig1.open();
-     vex::task::sleep(250);
+    //  dig1.open();
+      ClawMotor.spin(forward);
+      stopClaw = true;
     }
-    if(Controller1.ButtonB.pressing()) {
-      dig1.close();
-      vex::task::sleep(250);
-    }
-    if(Controller1.ButtonL1.pressing() && ArmMotors.position(degrees)<=460){
-      ArmMotors.spin(forward);
-    } else if(Controller1.ButtonL2.pressing() && ArmMotors.position(degrees)>=0){
-      ArmMotors.spin(reverse);
-    } else{
-      ArmMotors.stop();
+    else if(Controller1.ButtonB.pressing()) {
+      // dig1.close();
+      ClawMotor.spin(reverse);
+      stopClaw = true;
+    } else if(stopClaw) {
+      ClawMotor.stop();
+      stopClaw = false;
     }
 
-    if(Controller1.ButtonR1.pressing() && ClawMotor.position(degrees)<=120){
-      ClawMotor.spin(forward);
-    } else if(Controller1.ButtonR2.pressing() && ClawMotor.position(degrees)>=0){
-      ClawMotor.spin(reverse);
-    } else{
-      ClawMotor.stop();
+    if(Controller1.ButtonL1.pressing() && ArmMotors.position(degrees)<=650){
+      ArmMotors.spin(forward);
+      stopArm = true;
+    } else if(Controller1.ButtonL2.pressing() && ArmMotors.position(degrees)>=0){
+      ArmMotors.spin(reverse);
+      stopArm = true;
+    } else if(stopArm){
+      ArmMotors.stop();
+      stopArm = false;
+    }
+
+    if(Controller1.ButtonR1.pressing() && WristMotor.position(degrees)<=120){
+      WristMotor.spin(forward);
+      stopWrist = true;
+    } else if(Controller1.ButtonR2.pressing() && WristMotor.position(degrees)>=0){
+      WristMotor.spin(reverse);
+      stopWrist = true;
+    } else if(stopWrist){
+      WristMotor.stop();
+      stopWrist = false;
     }
 
     wait(20, msec); // Sleep the task for a short amount of time to
